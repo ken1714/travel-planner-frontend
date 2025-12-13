@@ -1,30 +1,33 @@
-# React + TypeScript + Vite
+## Travel Planner Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+このフロントエンドは React + Vite で構築しており、Apollo Client を通じて任意の GraphQL バックエンドへ問い合わせできるように設定済みです。
 
-Currently, two official plugins are available:
+### セットアップ
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. 依存関係をインストール
+   ```bash
+   npm install
+   ```
+2. `.env.example` をコピーし、接続したい GraphQL エンドポイントを設定
+   ```bash
+   cp .env.example .env
+   # 例) VITE_GRAPHQL_ENDPOINT=http://localhost:4000/graphql
+   ```
+3. 開発サーバーを起動
+   ```bash
+   npm run dev
+   ```
 
-## Expanding the ESLint configuration
+### GraphQL リクエスト確認
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+`src/App.tsx` では次のように Apollo Client の `useQuery` を利用して `HealthCheck` クエリを送信しています。
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```tsx
+const SAMPLE_QUERY = gql`
+  query HealthCheck {
+    health
+  }
+`
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+接続先のバックエンドに存在するクエリへ適宜書き換えてください。画面上の「Run again」ボタンで `refetch` が走り、レスポンス / エラーが見えるようになっています。
