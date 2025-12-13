@@ -1,34 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import './App.css'
 
+const SAMPLE_QUERY = gql`
+  query Users {
+    users {
+      id
+    }
+  }
+`
+
 function App() {
-  const [count, setCount] = useState(0)
+  const { data, error, loading, refetch } = useQuery(SAMPLE_QUERY, {
+    fetchPolicy: 'network-only',
+  })
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+    <main className="card">
+      <h1>GraphQL connection check</h1>
+      <p>
+        The request below runs <code>HealthCheck</code> against the GraphQL
+        endpoint configured in <code>VITE_GRAPHQL_ENDPOINT</code>. Replace the
+        query in <code>src/App.tsx</code> with one that exists on your backend.
       </p>
-    </>
+
+      <section>
+        <p>Status: {loading ? 'Loading…' : 'Completed'}</p>
+        {error ? (
+          <p className="error">Error: {error.message}</p>
+        ) : (
+          <pre className="response">
+            {data ? JSON.stringify(data, null, 2) : 'No data received yet'}
+          </pre>
+        )}
+      </section>
+
+      <button onClick={() => refetch()} disabled={loading}>
+        {loading ? 'Requesting…' : 'Run again'}
+      </button>
+    </main>
   )
 }
 
